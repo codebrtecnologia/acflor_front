@@ -1,5 +1,7 @@
 import AppLayout from '@/layout/AppLayout.vue';
 import { createRouter, createWebHistory } from 'vue-router';
+import UserList from '@/components/UserList.vue'; 
+import EntityList from '@/components/EntityList.vue'; 
 
 const router = createRouter({
     history: createWebHistory(),
@@ -48,7 +50,6 @@ const router = createRouter({
                     name: 'panel',
                     component: () => import('@/views/uikit/PanelsDoc.vue')
                 },
-
                 {
                     path: '/uikit/overlay',
                     name: 'overlay',
@@ -103,7 +104,26 @@ const router = createRouter({
                     path: '/documentation',
                     name: 'documentation',
                     component: () => import('@/views/pages/Documentation.vue')
-                }
+                },
+      
+                {
+                    path: '/users',
+                    name: 'UserList',
+                    component: UserList
+                },
+
+                {
+                    path: '/entities',
+                    name: 'EntityList',
+                    component: EntityList
+                },
+                
+                {     
+                    path: '/entity',
+                    name: 'entity',
+                    component: () => import('@/components/EntityList.vue'),
+                },
+
             ]
         },
         {
@@ -116,7 +136,6 @@ const router = createRouter({
             name: 'notfound',
             component: () => import('@/views/pages/NotFound.vue')
         },
-
         {
             path: '/auth/login',
             name: 'login',
