@@ -11,6 +11,18 @@ export default {
       throw error;
     }
   },
+
+    async getEntity() {
+      try {
+        const response = await api.get(`/entities/${entity.id}`, entity);
+        console.log("Response from API (getEntity):", response);
+        return response.data;
+      } catch (error) {
+        console.error('Erro ao buscar entidade:', error);
+        throw error;
+      }
+    } ,
+
   async createEntity(entity) {
     try {
       const response = await api.post('/entities', entity);
@@ -41,4 +53,5 @@ export default {
       throw error;
     }
   },
+  
 };

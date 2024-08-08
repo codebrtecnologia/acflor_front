@@ -1,40 +1,12 @@
 <template>
   <Fluid>
-    <div class="card flex flex-col gap-4">
-      <div class="font-semibold text-xl">Gerenciar Entidades</div>
-      <form @submit.prevent="saveEntity" class="flex flex-col gap-4">
-        <div class="field">
-          <label class="label">Nome</label>
-          <div class="control">
-            <InputText v-model="entityForm.name" class="input" type="text" placeholder="Nome" required />
-          </div>
-        </div>
-        <div class="field">
-          <label class="label">Responsável</label>
-          <div class="control">
-            <InputText v-model="entityForm.responsible" class="input" type="text" placeholder="Responsável" required />
-          </div>
-        </div>
-        <div class="field">
-          <label class="label">Telefone</label>
-          <div class="control">
-            <InputText v-model="entityForm.telephone" class="input" type="text" placeholder="Telefone" required />
-          </div>
-        </div>
-        <div class="field">
-          <label class="label">Email</label>
-          <div class="control">
-            <InputText v-model="entityForm.email" class="input" type="email" placeholder="Email" required />
-          </div>
-        </div>
-        <div class="control">
-          <Button class="button is-primary" type="submit">{{ isEditMode ? 'Atualizar' : 'Criar' }} Entidade</Button>
-        </div>
-      </form>
-    </div>
-    
     <div class="card flex flex-col gap-4 mt-8">
-      <div class="font-semibold text-xl">Lista de Entidades</div>
+      <div class="font-semibold text-xl flex justify-between items-center">
+        Lista de Entidades
+        <Button @click="openForm" icon="pi pi-plus" class="p-button-rounded p-button-success p-button-sm">
+          
+        </Button>
+      </div>
       <table class="table-auto w-full">
         <thead>
           <tr>
@@ -59,15 +31,37 @@
         </tbody>
       </table>
     </div>
+
+    <!-- Modal para o formulário de Entity -->
+    <Dialog header="Gerenciar Entity" v-model:visible="showForm" :modal="true" :closable="false" :draggable="false" :style="{ width: '30vw' }">
+      <EntityForm
+        :entityForm="entityForm"
+        :isEditMode="isEditMode"
+        @saveEntity="saveEntity"
+      />
+      <template #footer>
+        <Button label="Cancelar" icon="pi pi-times" class="p-button-text" @click="closeForm" />
+      </template>
+    </Dialog>
   </Fluid>
 </template>
 
 <script>
 import EntityService from '@/service/EntityService';
-import { ref, onMounted, watch } from 'vue';
+import { ref, onMounted } from 'vue';
+import EntityForm from './EntityForm.vue';
+import Dialog from 'primevue/dialog';
+import Button from 'primevue/button';
+
 
 export default {
+  components: {
+    EntityForm,
+    Dialog,
+    Button,
+  },
   setup() {
+
     const entities = ref([]);
     const entityForm = ref({
       id: null,
@@ -77,21 +71,18 @@ export default {
       email: '',
     });
     const isEditMode = ref(false);
+    const showForm = ref(false);
 
     const fetchEntities = async () => {
       try {
-        console.log('Fetching entities...');
         const response = await EntityService.getEntities();
-        console.log('Response data:', response); 
-        entities.value = response.entities; 
-        console.log('Entities state:', entities.value);
+        entities.value = response.entities;
       } catch (error) {
         console.error('Erro ao buscar entidades:', error);
       }
     };
 
     const saveEntity = async () => {
-      console.log('Salvando entidade:', entityForm.value);
       try {
         if (isEditMode.value) {
           await EntityService.updateEntity(entityForm.value);
@@ -100,19 +91,19 @@ export default {
         }
         resetForm();
         fetchEntities();
+        showForm.value = false; // Fechar o modal após salvar
       } catch (error) {
         console.error('Erro ao salvar entidade:', error);
       }
     };
 
     const editEntity = (entity) => {
-      console.log('Editando entidade:', entity); 
       entityForm.value = { ...entity };
       isEditMode.value = true;
+      showForm.value = true; // Abrir o modal para edição
     };
 
     const deleteEntity = async (entityId) => {
-      console.log('Deletando entidade com ID:', entityId); 
       try {
         await EntityService.deleteEntity(entityId);
         fetchEntities();
@@ -130,25 +121,32 @@ export default {
         email: '',
       };
       isEditMode.value = false;
-      console.log('Formulário resetado'); 
+    };
+
+    const openForm = () => {
+      resetForm();
+      showForm.value = true;
+    };
+
+    const closeForm = () => {
+      showForm.value = false;
     };
 
     onMounted(() => {
       fetchEntities();
     });
 
-    watch(entities, (newEntities) => {
-      console.log('Entities updated in watch:', newEntities);
-    });
-
     return {
       entities,
       entityForm,
       isEditMode,
+      showForm,
       saveEntity,
       editEntity,
       deleteEntity,
       resetForm,
+      openForm,
+      closeForm,
     };
   },
 };

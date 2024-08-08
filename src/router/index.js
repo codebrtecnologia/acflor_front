@@ -9,6 +9,7 @@ const router = createRouter({
         {
             path: '/',
             component: AppLayout,
+            
             children: [
                 {
                     path: '/',
@@ -105,25 +106,16 @@ const router = createRouter({
                     name: 'documentation',
                     component: () => import('@/views/pages/Documentation.vue')
                 },
-      
                 {
                     path: '/users',
                     name: 'UserList',
                     component: UserList
                 },
-
                 {
                     path: '/entities',
                     name: 'EntityList',
                     component: EntityList
-                },
-                
-                {     
-                    path: '/entity',
-                    name: 'entity',
-                    component: () => import('@/components/EntityList.vue'),
-                },
-
+                }
             ]
         },
         {
