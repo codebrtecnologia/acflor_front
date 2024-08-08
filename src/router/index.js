@@ -2,6 +2,7 @@ import AppLayout from '@/layout/AppLayout.vue';
 import { createRouter, createWebHistory } from 'vue-router';
 import UserList from '@/components/UserList.vue'; 
 import EntityList from '@/components/EntityList.vue'; 
+import CourseList from '@/components/CourseList.vue'; 
 
 const router = createRouter({
     history: createWebHistory(),
@@ -115,6 +116,11 @@ const router = createRouter({
                     path: '/entities',
                     name: 'EntityList',
                     component: EntityList
+                },
+                {
+                    path: '/courses',
+                    name: 'CourseList',
+                    component: CourseList
                 }
             ]
         },
