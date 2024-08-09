@@ -1,24 +1,33 @@
 <template>
     <Fluid>
       <div class="card flex flex-col gap-4 mt-8">
+        <Toolbar class="mb-6">
+          <template #start>
+            <Button label="New" icon="pi pi-plus" severity="success" class="mr-2" @click="openForm" />
+          </template>
+  
+          <template #end>
+            <Button label="Export" icon="pi pi-upload" severity="success" @click="exportCSV" />
+          </template>
+        </Toolbar>
+  
         <div class="font-semibold text-xl flex justify-between items-center">
           Lista de Curso
-          <Button @click="openForm" icon="pi pi-plus" class="p-button-rounded p-button-success p-button-sm">
-            
-          </Button>
+   
         </div>
-        <table class="table-auto w-full">
+        <table class="table-auto w-full custom-table">
           <thead>
             <tr>
               <th class="px-4 py-2">Nome</th>
+              <th class="px-4 py-2 text-right"></th>
             </tr>
           </thead>
           <tbody>
             <tr v-for="course in courses" :key="course.id">
-              <td class="border px-4 py-2">{{ course.name }}</td>
-              <td class="border px-4 py-2">
-                <Button @click="editCourse(course)" icon="pi pi-pencil" class="p-button-rounded p-button-info p-button-sm mr-2"> </Button>
-                <Button @click="deleteCourse(course.id)" icon="pi pi-trash" class="p-button-rounded p-button-danger p-button-sm"></Button>
+              <td class="px-4 py-2">{{ course.name }}</td>
+              <td class="px-4 py-2 text-right">
+                <Button icon="pi pi-pencil" outlined rounded class="mr-2" @click="editCourse(course)" />
+                <Button icon="pi pi-trash" outlined rounded severity="danger" @click="deleteCourse(course.id)" />
               </td>
             </tr>
           </tbody>
@@ -40,12 +49,11 @@
   </template>
   
   <script>
-  import CourseService from '@/service/CourseService';
   import { ref, onMounted } from 'vue';
+  import CourseService from '@/service/CourseService';
   import CourseForm from './CourseForm.vue';
   import Dialog from 'primevue/dialog';
   import Button from 'primevue/button';
-  
   
   export default {
     components: {
@@ -54,7 +62,6 @@
       Button,
     },
     setup() {
-  
       const courses = ref([]);
       const courseForm = ref({
         id: null,
@@ -102,6 +109,14 @@
         }
       };
   
+      const exportCSV = () => {
+        const csvContent = "data:text/csv;charset=utf-8,"
+          + courses.value.map(c => c.name).join("\n");
+  
+        const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+        saveAs(blob, "courses.csv");
+      };
+  
       const resetForm = () => {
         courseForm.value = {
           id: null,
@@ -131,6 +146,7 @@
         saveCourse,
         editCourse,
         deleteCourse,
+        exportCSV, // Certifique-se de retornar a função exportCSV aqui
         resetForm,
         openForm,
         closeForm,
@@ -143,4 +159,23 @@
   .field {
     margin-bottom: 1rem;
   }
+  
+  .custom-table {
+    border-collapse: collapse;
+    width: 100%;
+  }
+  
+  .custom-table th, .custom-table td {
+    border-bottom: 1px solid #ddd;
+  }
+  
+  .custom-table th {
+    text-align: left;
+  }
+  
+  .custom-table td {
+    border-right: none;
+    border-left: none;
+  }
   </style>
+  
