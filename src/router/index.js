@@ -4,6 +4,7 @@ import UserList from '@/components/UserList.vue';
 import EntityList from '@/components/EntityList.vue'; 
 import CourseList from '@/components/CourseList.vue'; 
 import DeficiencyList from '@/components/DeficiencyList.vue';
+import DiciplineList from '@/components/DiciplineList.vue';
 
 const router = createRouter({
     history: createWebHistory(),
@@ -127,6 +128,11 @@ const router = createRouter({
                     path: '/deficiencies',
                     name: 'DeficiencyList',
                     component: DeficiencyList
+                },
+                {
+                    path: '/diciplines',
+                    name: 'DiciplineList',
+                    component: DiciplineList
                 }
             ]
         },
